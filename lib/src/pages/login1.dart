@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   GlobalKey<ScaffoldState> registKey = new GlobalKey();
-    final _formKey = GlobalKey<FormState>();
 
   String _phoneNum = '';
 
@@ -163,12 +162,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.only(left: 40.0, right: 40.0, top: 20.0),
       child: new RaisedButton(
         onPressed: () {
-          if (_formKey.currentState.validate()) {
-            ///只有输入的内容符合要求通过才会到达此处
-            _formKey.currentState.save();
-            //TODO 执行登录方法
             print('email:$_phoneNum , assword:$_verifyCode');
-          }
         },
         color: Colors.blue,
         textColor: Colors.white,
@@ -194,9 +188,7 @@ class _LoginPageState extends State<LoginPage> {
         _buildLabel(),
         _buildPhoneEdit(),
         _buildVerifyCodeEdit(),
-      
         _buildRegist(),
-       
       ],
     );
   }
@@ -210,5 +202,15 @@ class _LoginPageState extends State<LoginPage> {
         body: _buildBody(),
       ),
     );
+  }
+
+
+    Align buildOtherLoginText() {
+    return Align(
+        alignment: Alignment.center,
+        child: Text(
+          '其他账号登录',
+          style: TextStyle(color: Colors.grey, fontSize: 14.0),
+        ));
   }
 }
