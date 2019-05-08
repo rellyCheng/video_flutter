@@ -15,6 +15,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: LoginPage(),
+       routes: {
+        "indexPage":(BuildContext context)=>new IndexPage(),
+      },
     );
   }
 }

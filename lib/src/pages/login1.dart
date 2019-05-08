@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
+import '../utils/HttpUtils.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -56,6 +58,18 @@ class _LoginPageState extends State<LoginPage> {
     _timer?.cancel();
   }
 
+  _login() async{
+    var result = await HttpUtils.request(
+      '/api/home/login', 
+      method: HttpUtils.POST,
+      data: {
+        'userName': 'admin',
+        'password': '123123'
+      }
+    );
+  print(result);
+    // Navigator.pushNamed(context, "indexPage");
+  }
 
   Widget _buildPhoneEdit() {
     var node = new FocusNode();
@@ -162,7 +176,8 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.only(left: 40.0, right: 40.0, top: 20.0),
       child: new RaisedButton(
         onPressed: () {
-            print('email:$_phoneNum , assword:$_verifyCode');
+           
+           _login();
         },
         color: Colors.blue,
         textColor: Colors.white,
