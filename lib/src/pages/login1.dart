@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dio/dio.dart';
 import '../utils/HttpUtils.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -52,10 +52,24 @@ class _LoginPageState extends State<LoginPage> {
         _verifyStr = '重新发送';
       }
     });
+
+    _getCode();
+
   }
 
   _cancelTimer() {
     _timer?.cancel();
+  }
+
+  
+  _getCode() async{
+    await HttpUtils.request(
+      '/api/home/getCode', 
+      method: HttpUtils.POST,
+      data: {
+        'phoneNumber': _phoneNum,
+      }
+    );
   }
 
   _login() async{
@@ -63,12 +77,13 @@ class _LoginPageState extends State<LoginPage> {
       '/api/home/login', 
       method: HttpUtils.POST,
       data: {
-        'userName': 'admin',
-        'password': '123123'
+        'phoneNumber': _phoneNum,
+        'code': _verifyCode
       }
     );
-  print(result);
-    // Navigator.pushNamed(context, "indexPage");
+      if(result['state']==0){
+         Navigator.pushNamed(context, "indexPage");
+      }
   }
 
   Widget _buildPhoneEdit() {

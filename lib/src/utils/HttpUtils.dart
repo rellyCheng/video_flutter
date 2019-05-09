@@ -17,7 +17,7 @@ class HttpUtils {
   static Dio dio;
 
   /// default options
-  static const String API_PREFIX = 'http://118.24.218.25:8425/';
+  static const String API_PREFIX = 'http://192.168.1.160:8080/';
   static const int CONNECT_TIMEOUT = 10000;
   static const int RECEIVE_TIMEOUT = 3000;
 
