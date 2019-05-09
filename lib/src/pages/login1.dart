@@ -64,8 +64,8 @@ class _LoginPageState extends State<LoginPage> {
   
   _getCode() async{
     await HttpUtils.request(
-      '/api/home/getCode', 
-      method: HttpUtils.POST,
+      '/api/home/getCode?phoneNumber='+_phoneNum, 
+      method: HttpUtils.GET,
       data: {
         'phoneNumber': _phoneNum,
       }
@@ -106,9 +106,9 @@ class _LoginPageState extends State<LoginPage> {
         inputFormatters: <TextInputFormatter>[
           WhitelistingTextInputFormatter.digitsOnly,
         ],
-        onSubmitted: (text) {
-          FocusScope.of(context).reparentIfNeeded(node);
-        },
+        // onSubmitted: (text) {
+        //   FocusScope.of(context).reparentIfNeeded(node);
+        // },
       ),
     );
   }
@@ -131,9 +131,9 @@ class _LoginPageState extends State<LoginPage> {
       inputFormatters: <TextInputFormatter>[
         WhitelistingTextInputFormatter.digitsOnly,
       ],
-      onSubmitted: (text) {
-        FocusScope.of(context).reparentIfNeeded(node);
-      },
+      // onSubmitted: (text) {
+      //   FocusScope.of(context).reparentIfNeeded(node);
+      // },
     );
 
     Widget verifyCodeBtn = new InkWell(
