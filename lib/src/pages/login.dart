@@ -1,78 +1,265 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../utils/HttpUtils.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<StatefulWidget> createState() {
+    return new _LoginPageState();
+  }
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _phone, _code;
-  bool _isObscure = true;
-  Color _eyeColor;
+  GlobalKey<ScaffoldState> registKey = new GlobalKey();
 
+  String _phoneNum = '';
+
+  String _verifyCode = '';
+
+  int _seconds = 0;
+
+  String _verifyStr = '获取验证码';
+
+  var  _timer;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 22.0),
-              children: <Widget>[
-                SizedBox(
-                  height: kToolbarHeight,
-                ),
-                buildTitle(),
-                buildTitleLine(),
-                SizedBox(height: 70.0),
-                buildEmailTextField(),
-                SizedBox(height: 30.0),
-                buildPasswordTextField(context),
-                buildForgetPasswordText(context),
-                SizedBox(height: 60.0),
-                buildLoginButton(context),
-                SizedBox(height: 30.0),
-                buildOtherLoginText(),
-                buildRegisterText(context),
-              ],
-            )));
+  void initState() {
+    super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _cancelTimer();
+  }
 
+  _startTimer() {
+    _seconds = 10;
+     print(_timer==null);
+    _timer = new Timer.periodic(new Duration(seconds: 1), (timer) {
+      if (_seconds == 0) {
+        timer?.cancel();//此处有个坑，必须释放Timer.periodic 所产生的timer对象，只释放_timer不行，不然timer一直存在
+        timer = null;
+         _cancelTimer();
+        return;
+      }
+      _seconds--;
+      _verifyStr = '$_seconds(s)';
+      setState(() {});
+      if (_seconds == 0) {
+        _verifyStr = '重新发送';
+        _cancelTimer();
+      }
+    });
+    //获取验证码
+    _getCode();
+  }
+
+  void _cancelTimer() {
+      _timer?.cancel();
+      _timer = null;
+  }
 
   
+  _getCode() async{
+    var result = await HttpUtils.request(
+      '/api/home/getCode?phoneNumber='+_phoneNum, 
+      method: HttpUtils.GET,
+      data: {
+        'phoneNumber': _phoneNum,
+      }
+    );
 
+    if(result["state"]==0){
+        _timer = new Timer(new Duration(seconds: 3), () {
+          _showDialog("验证码为："+result["message"]+",有效时间为5分钟。");
+        });
+    }
+  }
 
-  Align buildRegisterText(BuildContext context) {
-    return Align(
+  _showDialog(text){
+     showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return SimpleDialog(
+            title: Text(text),
+            children: <Widget>[
+              
+            ],
+          );
+        }
+      );
+  }
+
+  _login() async{
+    var result = await HttpUtils.request(
+      '/api/home/login', 
+      method: HttpUtils.POST,
+      data: {
+        'phoneNumber': _phoneNum,
+        'code': _verifyCode
+      }
+    );
+      if(result['state']==0){
+         Navigator.pushNamed(context, "indexPage");
+      }else{
+
+      }
+  }
+
+  Widget _buildPhoneEdit() {
+    // var node = new FocusNode();
+    return new Padding(
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      child: new TextField(
+        onChanged: (str) {
+          _phoneNum = str;
+          setState(() {});
+        },
+        decoration: new InputDecoration(
+          hintText: '请输入手机号',
+        ),
+        maxLines: 1,
+        maxLength: 11,
+        //键盘展示为号码
+        keyboardType: TextInputType.phone,
+        //只能输入数字
+        inputFormatters: <TextInputFormatter>[
+          WhitelistingTextInputFormatter.digitsOnly,
+        ],
+        // onSubmitted: (text) {
+        //   FocusScope.of(context).reparentIfNeeded(node);
+        // },
+      ),
+    );
+  }
+
+  Widget _buildVerifyCodeEdit() {
+    // var node = new FocusNode();
+    Widget verifyCodeEdit = new TextField(
+      onChanged: (str) {
+        _verifyCode = str;
+        setState(() {});
+      },
+      decoration: new InputDecoration(
+        hintText: '请输入短信验证码',
+      ),
+      maxLines: 1,
+      maxLength: 6,
+      //键盘展示为数字
+      keyboardType: TextInputType.number,
+      //只能输入数字
+      inputFormatters: <TextInputFormatter>[
+        WhitelistingTextInputFormatter.digitsOnly,
+      ],
+      // onSubmitted: (text) {
+      //   FocusScope.of(context).reparentIfNeeded(node);
+      // },
+    );
+
+    Widget verifyCodeBtn = new InkWell(
+      onTap: (_seconds == 0)
+          ? () {
+              setState(() {
+                _startTimer();
+              });
+            }
+          : null,
+      child: new Container(
+        alignment: Alignment.center,
+        width: 100.0,
+        height: 36.0,
+        decoration: new BoxDecoration(
+          border: new Border.all(
+            width: 1.0,
+            color: Colors.blue,
+          ),
+        ),
+        child: new Text(
+          '$_verifyStr',
+          style: new TextStyle(fontSize: 14.0),
+        ),
+      ),
+    );
+
+    return new Padding(
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
+      child: new Stack(
+        children: <Widget>[
+          verifyCodeEdit,
+          new Align(
+            alignment: Alignment.topRight,
+            child: verifyCodeBtn,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLabel() {
+    return new Container(
+      margin: const EdgeInsets.only(top: 40.0, bottom: 20.0),
       alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.only(top: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('没有账号？'),
-            GestureDetector(
-              child: Text(
-                '点击注册',
-                style: TextStyle(color: Colors.green),
-              ),
-              onTap: () {
-                //TODO 跳转到注册页面
-                print('去注册');
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      child: new Text(
+        "登录",
+        style: new TextStyle(fontSize: 24.0),
+      ),
+    );
+  }
+
+  Widget _buildRegist() {
+    return new Padding(
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0, top: 20.0),
+      child: new RaisedButton(
+        onPressed: () {
+           
+           _login();
+        },
+        color: Colors.blue,
+        textColor: Colors.white,
+        disabledColor: Colors.blue[100],
+        child: new Text(
+          "登  录",
+          style: new TextStyle(fontSize: 16.0),
         ),
       ),
     );
   }
 
+  
 
 
-  Align buildOtherLoginText() {
+
+  Widget _buildBody(){
+    return ListView(
+      children: <Widget>[
+        SizedBox(
+          height: kToolbarHeight,
+        ),
+        _buildLabel(),
+        _buildPhoneEdit(),
+        _buildVerifyCodeEdit(),
+        _buildRegist(),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Material(
+      child: new Scaffold(
+        key: registKey,
+        backgroundColor: Colors.white,
+        body: _buildBody(),
+      ),
+    );
+  }
+
+
+    Align buildOtherLoginText() {
     return Align(
         alignment: Alignment.center,
         child: Text(
@@ -80,116 +267,4 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.grey, fontSize: 14.0),
         ));
   }
-
-  Align buildLoginButton(BuildContext context) {
-    return Align(
-      child: SizedBox(
-        height: 45.0,
-        width: 270.0,
-        child: RaisedButton(
-          child: Text(
-            '登录',
-            style: Theme.of(context).primaryTextTheme.headline,
-          ),
-          color: Colors.black,
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              ///只有输入的内容符合要求通过才会到达此处
-              _formKey.currentState.save();
-              //TODO 执行登录方法
-              print('email:$_phone , assword:$_code');
-            }
-          },
-          shape: StadiumBorder(side: BorderSide()),
-        ),
-      ),
-    );
-  }
-
-  Padding buildForgetPasswordText(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: FlatButton(
-          child: Text(
-            '忘记密码？',
-            style: TextStyle(fontSize: 14.0, color: Colors.grey),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  TextFormField buildPasswordTextField(BuildContext context) {
-    return TextFormField(
-      onSaved: (String value) => _code = value,
-      obscureText: _isObscure,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return '请输入密码';
-        }
-      },
-      decoration: InputDecoration(
-          labelText: 'Password',
-          suffixIcon: IconButton(
-              icon: Icon(
-                Icons.remove_red_eye,
-                color: _eyeColor,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isObscure = !_isObscure;
-                  _eyeColor = _isObscure
-                      ? Colors.grey
-                      : Theme.of(context).iconTheme.color;
-                });
-              })),
-    );
-  }
-
-  TextFormField buildEmailTextField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: '手机号码',
-      ),
-      validator: (String value) {
-        var emailReg = RegExp(
-            r"^1[34578]\d{9}$");
-        if (!emailReg.hasMatch(value)) {
-          return '请输入正确的手机号';
-        }
-      },
-      onSaved: (String value) => _phone = value,
-    );
-  }
-
-  Padding buildTitleLine() {
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0, top: 4.0),
-      child: Align(
-        alignment: Alignment.bottomLeft,
-        child: Container(
-          color: Colors.black26,
-          width: 50.0,
-          height: 2.0,
-        ),
-      ),
-    );
-  }
-
-  Padding buildTitle() {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        '登录',
-        style: TextStyle(fontSize: 42.0),
-      ),
-    );
-  }
-
-
 }
