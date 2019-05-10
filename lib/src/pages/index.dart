@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
+import '../utils/HttpUtils.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -87,18 +88,31 @@ class IndexState extends State<IndexPage> {
           : _validateError = false;
       _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
     });
-    
-    if (_channelController.text.isNotEmpty) {
-      // await for camera and mic permissions before pushing video page
-      await _handleCameraAndMic();
-      // push video page with given channel name
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => new CallPage(
-                    channelName: _channelController.text,
-                  )));
-    }
+
+    // var result = await HttpUtils.request(
+    //   '/api/match/user?phoneNumber='+_phoneNum, 
+    //   method: HttpUtils.GET,
+    //   data: {
+    //     'phoneNumber': _phoneNum,
+    //   }
+    // );
+ 
+
+
+
+
+
+    // if (_channelController.text.isNotEmpty) {
+    //   // await for camera and mic permissions before pushing video page
+    //   await _handleCameraAndMic();
+    //   // push video page with given channel name
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => new CallPage(
+    //                 channelName: _channelController.text,
+    //               )));
+    // }
   }
 
   _handleCameraAndMic() async {

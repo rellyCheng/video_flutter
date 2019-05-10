@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/HttpUtils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -105,7 +106,14 @@ class _LoginPageState extends State<LoginPage> {
       }
     );
       if(result['state']==0){
-         Navigator.pushNamed(context, "indexPage");
+
+        // 获取数据持久化实例
+        // var prefs = await SharedPreferences.getInstance();
+        //   // 设置存储数据
+        // await prefs.setInt('userId', result['data']['userId']);
+        // await prefs.setString('phoneNumber', result['data']['phoneNumber']);
+        // Navigator.pushNamed(context, "indexPage");
+        print(result);
       }else{
          _showDialog(result["message"]);
       }
