@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
 import '../utils/HttpUtils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -89,14 +90,19 @@ class IndexState extends State<IndexPage> {
       _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
     });
 
-    // var result = await HttpUtils.request(
-    //   '/api/match/user?phoneNumber='+_phoneNum, 
-    //   method: HttpUtils.GET,
-    //   data: {
-    //     'phoneNumber': _phoneNum,
-    //   }
-    // );
- 
+
+     // 获取实例
+    var prefs = await SharedPreferences.getInstance();
+    // 获取存储数据
+    var _userId = prefs.getInt('userId');
+    print(_userId);
+
+    var result = await HttpUtils.request(
+      '/api/match/user?userId='+'$_userId', 
+      method: HttpUtils.GET,
+    );
+  
+  
 
 
 
