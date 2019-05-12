@@ -1,9 +1,15 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/HttpUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:adhara_socket_io/adhara_socket_io.dart';
+
+import '../utils/MessageUtils.dart';
+
+// import 'package:flutter_socket_io/flutter_socket_io.dart';
+// import 'package:flutter_socket_io/socket_io_manager.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -26,9 +32,12 @@ class _LoginPageState extends State<LoginPage> {
 
   var  _timer;
 
+
   @override
   void initState() {
     super.initState();
+    _initSocket();
+
   }
 
   @override
@@ -96,27 +105,68 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
-  _login() async{
-    var result = await HttpUtils.request(
-      '/api/home/login', 
-      method: HttpUtils.POST,
-      data: {
-        'phoneNumber': _phoneNum,
-        'code': _verifyCode
-      }
-    );
-      if(result['state']==0){
 
-        //获取数据持久化实例
-        var prefs = await SharedPreferences.getInstance();
-          // 设置存储数据
-        await prefs.setInt('userId', result['data']['id']);
-        await prefs.setString('phoneNumber', result['data']['userName']);
-        Navigator.pushNamed(context, "indexPage");
-        print(result);
-      }else{
-         _showDialog(result["message"]);
-      }
+  _onSocketInfo(dynamic data) async{
+    print("Socket info: " + data);
+  }
+
+  // SocketIO socketIO;
+  // SocketIOManager manager = SocketIOManager();
+
+   _initSocket() async{
+    // socketIO = SocketIOManager().createSocketIO("http://192.168.101.26:9091", "/");
+    // socketIO.init();
+    // socketIO.subscribe("newMatch1", _onSocketInfo);
+    // socketIO.connect();
+
+      // socketIO = await manager.createInstance(
+      //   'http://192.168.101.26:9091',
+      //   enableLogging: true
+      // );  
+      // await socketIO.onConnect((data){
+      //   // print("connected...");
+      //   // print(data);
+      // });
+      // socketIO.onConnect((data){
+      //   print("connected...");
+      //   print(data);
+      // });
+      // socketIO.onDisconnect((data){
+      //   // print("disconnect....了");
+      // });
+      // socketIO.connect();
+
+
+
+  }
+
+  _login() async{
+
+  MessageUtils.connect();
+    
+
+     
+    // var result = await HttpUtils.request(
+    //   '/api/home/login', 
+    //   method: HttpUtils.POST,
+    //   data: {
+    //     'phoneNumber': _phoneNum,
+    //     'code': _verifyCode
+    //   }
+    // );
+    //   if(result['state']==0){
+
+    //     //获取数据持久化实例
+    //     var prefs = await SharedPreferences.getInstance();
+    //       // 设置存储数据
+    //     await prefs.setInt('userId', result['data']['id']);
+    //     await prefs.setString('phoneNumber', result['data']['userName']);
+    //     Navigator.pushNamed(context, "indexPage");
+    //     print(result);
+       
+    //   }else{
+    //      _showDialog(result["message"]);
+    //   }
   }
 
   Widget _buildPhoneEdit() {
