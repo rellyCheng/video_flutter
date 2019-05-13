@@ -35,16 +35,66 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    print('initState');
     super.initState();
-    _initSocket();
+  }
 
+  @override
+  void didChangeDependencies() {
+    print('didChangeDependencies');
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(LoginPage oldWidget) {
+    print('didUpdateWidget');
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void deactivate() {
+    print('deactivate');
+    super.deactivate();
   }
 
   @override
   void dispose() {
+    print('dispose');
     super.dispose();
-    _cancelTimer();
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        print('AppLifecycleState.inactive');
+        break;
+      case AppLifecycleState.paused:
+        print('AppLifecycleState.paused');
+        break;
+      case AppLifecycleState.resumed:
+        print('AppLifecycleState.resumed');
+        break;
+      case AppLifecycleState.suspending:
+        print('AppLifecycleState.suspending');
+        break;
+    }
+
+  }
+
+
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  // }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _cancelTimer();
+  // }
 
   _startTimer() {
     _seconds = 10;
@@ -141,32 +191,28 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _login() async{
-
-  MessageUtils.connect();
-    
-
      
-    // var result = await HttpUtils.request(
-    //   '/api/home/login', 
-    //   method: HttpUtils.POST,
-    //   data: {
-    //     'phoneNumber': _phoneNum,
-    //     'code': _verifyCode
-    //   }
-    // );
-    //   if(result['state']==0){
+    var result = await HttpUtils.request(
+      '/api/home/login', 
+      method: HttpUtils.POST,
+      data: {
+        'phoneNumber': _phoneNum,
+        'code': _verifyCode
+      }
+    );
+      if(result['state']==0){
 
-    //     //获取数据持久化实例
-    //     var prefs = await SharedPreferences.getInstance();
-    //       // 设置存储数据
-    //     await prefs.setInt('userId', result['data']['id']);
-    //     await prefs.setString('phoneNumber', result['data']['userName']);
-    //     Navigator.pushNamed(context, "indexPage");
-    //     print(result);
-       
-    //   }else{
-    //      _showDialog(result["message"]);
-    //   }
+        //获取数据持久化实例
+        var prefs = await SharedPreferences.getInstance();
+          // 设置存储数据
+        await prefs.setInt('userId', result['data']['id']);
+        await prefs.setString('phoneNumber', result['data']['userName']);
+        Navigator.pushNamed(context, "indexPage");
+        print(result);
+      //  MessageUtils.connect(result['data']['id']);
+      }else{
+         _showDialog(result["message"]);
+      }
   }
 
   Widget _buildPhoneEdit() {

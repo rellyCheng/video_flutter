@@ -3,6 +3,9 @@ import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
 import '../utils/HttpUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_socket_io/flutter_socket_io.dart';
+import 'package:flutter_socket_io/socket_io_manager.dart';
+import './historyMatch.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -15,15 +18,28 @@ class IndexState extends State<IndexPage> {
   /// create a channelController to retrieve text value
   final _channelController = TextEditingController();
 
-  /// if channel textfield is validated to have error
-  bool _validateError = false;
+  bool _toCallPage;
   var _buttonText = '匹配';
+
+
+   @override
+  void initState() {
+    _toCallPage = true;
+    super.initState();
+  }
 
   @override
   void dispose() {
     // dispose input controller
     _channelController.dispose();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    print('deactivate');
+     _toCallPage = !_toCallPage;
+    super.deactivate();
   }
 
   @override
@@ -38,24 +54,7 @@ class IndexState extends State<IndexPage> {
               height: 400,
               child: Column(
                 children: <Widget>[
-                  Row(children: <Widget>[]),
                   Row(children: <Widget>[
-                    Expanded(
-                      child:new Offstage(
-                        offstage: false, //隐藏TextField
-                        child: TextField(
-                        controller: _channelController,
-                        decoration: InputDecoration(
-                            errorText: _validateError
-                                ? "Channel name is mandatory"
-                                : null,
-                            border: UnderlineInputBorder(
-                                borderSide: BorderSide(width: 1)),
-                            hintText: 'Channel name'
-                            ),
-                          ),
-                      ),
-                    )
                   ]),
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
@@ -75,18 +74,46 @@ class IndexState extends State<IndexPage> {
                               ),
                           )
                         ],
-                      ))
+                      )),
+                      // Padding(
+                      // padding: EdgeInsets.symmetric(vertical: 20),
+                      // child: Row(
+                      //   children: <Widget>[
+                      //     Expanded(
+                      //         child: new Container(
+                      //         width: 200.0,
+                      //           child:  Align(
+                      //           alignment: Alignment.center,
+                      //           child: Text(
+                      //             '历史匹配记录', 
+                      //             style: TextStyle(color: Colors.grey, fontSize: 14.0),
+                                
+                      //           )),
+                      //         ),
+                      //     )
+                      //   ],
+                      // )),
                 ],
               )),
-        ));
+        ),
+        floatingActionButton: new FloatingActionButton(
+          tooltip: 'Increment',
+          child: new Icon(Icons.add),
+          onPressed: (){
+          //导航到历史匹配记录页面 
+          Navigator.push( context,
+          new MaterialPageRoute(builder: (context) {
+            return new HistoryMatch();
+          }));
+          },
+        ), 
+        );
+       
   }
 
   onJoin() async {
     // update input validation
     setState(() {
-      _channelController.text.isEmpty
-          ? _validateError = true
-          : _validateError = false;
       _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
     });
 
@@ -101,24 +128,27 @@ class IndexState extends State<IndexPage> {
       '/api/match/user?userId='+'$_userId', 
       method: HttpUtils.GET,
     );
-  
-  
 
-
-
-
-
-    // if (_channelController.text.isNotEmpty) {
-    //   // await for camera and mic permissions before pushing video page
-    //   await _handleCameraAndMic();
-    //   // push video page with given channel name
-    //   Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //           builder: (context) => new CallPage(
-    //                 channelName: _channelController.text,
-    //               )));
-    // }
+    SocketIO socketIO;
+    socketIO = SocketIOManager().createSocketIO("http://192.168.1.160:9091", "/",query: "userId=$_userId");
+    socketIO.init();
+    socketIO.subscribe("socket_info", _onSocketInfo);
+    socketIO.connect();
+  }
+  _onSocketInfo(dynamic data) async{
+    var roomId = new DateTime.now().millisecondsSinceEpoch;
+    if(_toCallPage){
+      //获取相机权限和录音权限
+      await _handleCameraAndMic();
+      // 跳转到视频通话页面
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => new CallPage(
+                    channelName: '$roomId',
+      )));
+      _toCallPage = true;
+    }
   }
 
   _handleCameraAndMic() async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './src/pages/index.dart';
 import './src/pages/login.dart';
+import './src/pages/call.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       home: LoginPage(),
        routes: {
         "indexPage":(BuildContext context)=>new IndexPage(),
+        "callPage":(BuildContext context)=>new CallPage(),
       },
     );
   }

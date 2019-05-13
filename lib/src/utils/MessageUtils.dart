@@ -1,23 +1,27 @@
 // import 'package:local_notifications/local_notifications.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
+import './../pages/call.dart';
+import 'package:flutter/material.dart';
 
 class MessageUtils {
   static SocketIO socketIO;
   static num _id = 0;
 
-  static void connect() {
-    socketIO = SocketIOManager().createSocketIO("http://192.168.101.26:9091", "/");
+  static void connect(userId) {
+    socketIO = SocketIOManager().createSocketIO("http://192.168.1.160:9091", "/",query: "userId=${userId}");
     socketIO.init();
     print(socketIO.getId());
-    socketIO.subscribe("socket_info", _onSocketInfo);
+    // socketIO.subscribe("socket_info", _onSocketInfo);
     socketIO.connect();
   }
 
  static void  _onSocketInfo(dynamic data) {
-    // print("Socket info: " + data);
+    print("Socket info: " + data);
+      // await for camera and mic permissions before pushing video page
+      // push video page with given channel name
+        // Navigator.pushNamed(null, "callPage");
   }
-
   static void _onReceiveChatMessage(dynamic message) {
     print("Message from UFO: " + message);
   }
