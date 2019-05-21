@@ -21,12 +21,13 @@ class IndexState extends State<IndexPage> {
   final _channelController = TextEditingController();
   bool _toCallPage;
   var _buttonText = '匹配';
+  var _userId;
 
 
    @override
   void initState() {
     _toCallPage = true;
-   
+    getUser();
     super.initState();
   }
 
@@ -89,14 +90,15 @@ class IndexState extends State<IndexPage> {
                                       text: '历史匹配记录',
                                      style: TextStyle(fontSize: 17.0, color: Colors.blue),
                                      recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        //校验用户是否登录
-                                        if(_checkLogin())
-                                        //导航到历史匹配记录页面 
-                                        Navigator.push( context,
-                                         MaterialPageRoute(builder: (context) {
-                                            return HistoryMatch();
-                                          }));
+                                      ..onTap = () async {
+                                          //导航到历史匹配记录页面 
+                                          if(_checkLogin()){
+                                            await Navigator.push( context,
+                                            MaterialPageRoute(builder: (context) {
+                                                return HistoryMatch();
+                                            }));
+                                          }
+                                         
                                       }),
                                     ),
                                   ),
@@ -111,14 +113,16 @@ class IndexState extends State<IndexPage> {
        
   }
 
-  _checkLogin() async {
-     // 获取实例
+  getUser() async{
+    // 获取实例
     var prefs = await SharedPreferences.getInstance();
     // 获取存储数据
-    var _userId = prefs.getInt('userId');
+     _userId = prefs.getInt('userId');
+  }
+  bool _checkLogin()  {
     if(_userId == null){
       // Navigator.push(context,MaterialPageRoute(builder: (context) => LoginPage()));
-     showDialog(
+      showDialog(
       context: context,
       builder: (context) => AlertDialog(
             title: Text('温馨提示'),
@@ -150,8 +154,7 @@ class IndexState extends State<IndexPage> {
     // 获取存储数据
     var _userId = prefs.getInt('userId');
     //校验用户是否登录
-    var isLogin = _checkLogin();
-    if(isLogin==true){
+    if(_checkLogin()){
       setState(() {
         _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
       });
@@ -167,8 +170,6 @@ class IndexState extends State<IndexPage> {
       socketIO.subscribe("socket_info", _onSocketInfo);
       socketIO.connect();
     }
-    
-   
   }
   _onSocketInfo(dynamic data) async{
     var roomId = DateTime.now().millisecondsSinceEpoch;
