@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: IndexPage(),
        routes: {
         "indexPage":(BuildContext context)=>new IndexPage(),
         "callPage":(BuildContext context)=>new CallPage(),
