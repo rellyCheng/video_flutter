@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import './historyMatch.dart';
+import 'package:flutter/gestures.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -17,7 +18,6 @@ class IndexPage extends StatefulWidget {
 class IndexState extends State<IndexPage> {
   /// create a channelController to retrieve text value
   final _channelController = TextEditingController();
-
   bool _toCallPage;
   var _buttonText = '匹配';
 
@@ -45,13 +45,11 @@ class IndexState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Agora Flutter QuickStart'),
-        ),
+     
         body: Center(
           child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              height: 400,
+              height: 350,
               child: Column(
                 children: <Widget>[
                   Row(children: <Widget>[
@@ -75,38 +73,36 @@ class IndexState extends State<IndexPage> {
                           )
                         ],
                       )),
-                      // Padding(
-                      // padding: EdgeInsets.symmetric(vertical: 20),
-                      // child: Row(
-                      //   children: <Widget>[
-                      //     Expanded(
-                      //         child: new Container(
-                      //         width: 200.0,
-                      //           child:  Align(
-                      //           alignment: Alignment.center,
-                      //           child: Text(
-                      //             '历史匹配记录', 
-                      //             style: TextStyle(color: Colors.grey, fontSize: 14.0),
-                                
-                      //           )),
-                      //         ),
-                      //     )
-                      //   ],
-                      // )),
+                      Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                              child: new Container(
+                              width: 200.0,
+                                child:  Align(
+                                alignment: Alignment.center,
+                                child: new RichText(
+                                    text: new TextSpan(
+                                      text: '历史匹配记录',
+                                     style: TextStyle(fontSize: 17.0, color: Colors.blue),
+                                     recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                          //导航到历史匹配记录页面 
+                                          Navigator.push( context,
+                                          new MaterialPageRoute(builder: (context) {
+                                            return new HistoryMatch();
+                                          }));
+                                      }),
+                                    ),
+                                  ),
+                              ),
+                          )
+                        ],
+                      )),
                 ],
               )),
         ),
-        floatingActionButton: new FloatingActionButton(
-          tooltip: 'Increment',
-          child: new Icon(Icons.add),
-          onPressed: (){
-          //导航到历史匹配记录页面 
-          Navigator.push( context,
-          new MaterialPageRoute(builder: (context) {
-            return new HistoryMatch();
-          }));
-          },
-        ), 
         );
        
   }
