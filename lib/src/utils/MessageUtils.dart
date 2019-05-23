@@ -3,13 +3,14 @@ import 'package:flutter_socket_io/flutter_socket_io.dart';
 import 'package:flutter_socket_io/socket_io_manager.dart';
 import './../pages/call.dart';
 import 'package:flutter/material.dart';
+import './settings.dart';
 
 class MessageUtils {
   static SocketIO socketIO;
   static num _id = 0;
 
   static void connect(userId) {
-    socketIO = SocketIOManager().createSocketIO("http://192.168.1.160:9091", "/",query: "userId=${userId}");
+    socketIO = SocketIOManager().createSocketIO(SOCKET_IP, "/",query: "userId=${userId}");
     socketIO.init();
     print(socketIO.getId());
     // socketIO.subscribe("socket_info", _onSocketInfo);

@@ -8,6 +8,7 @@ import 'package:flutter_socket_io/socket_io_manager.dart';
 import './historyMatch.dart';
 import 'package:flutter/gestures.dart';
 import './login.dart';
+import '../utils/settings.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -165,14 +166,15 @@ class IndexState extends State<IndexPage> {
       );
 
       SocketIO socketIO;
-      socketIO = SocketIOManager().createSocketIO("http://192.168.1.160:9091", "/",query: "userId=$_userId");
+      socketIO = SocketIOManager().createSocketIO(SOCKET_IP, "/",query: "userId=$_userId");
       socketIO.init();
       socketIO.subscribe("socket_info", _onSocketInfo);
       socketIO.connect();
     }
   }
   _onSocketInfo(dynamic data) async{
-    var roomId = DateTime.now().millisecondsSinceEpoch;
+    var roomId = data;
+    print(roomId);
     if(_toCallPage){
       //获取相机权限和录音权限
       await _handleCameraAndMic();
@@ -181,7 +183,7 @@ class IndexState extends State<IndexPage> {
           context,
           MaterialPageRoute(
               builder: (context) => CallPage(
-                    channelName: '$roomId',
+                    channelName: roomId,
       )));
       _toCallPage = true;
     }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'dart:async';
+import './settings.dart';
 
 /*
  * 封装 restful 请求
@@ -17,7 +18,7 @@ class HttpUtils {
   static Dio dio;
 
   /// default options
-  static const String API_PREFIX = 'http://192.168.1.160:8080/';
+  static const String API_PREFIX = SERVER_IP;
   static const int CONNECT_TIMEOUT = 10000;
   static const int RECEIVE_TIMEOUT = 3000;
 
