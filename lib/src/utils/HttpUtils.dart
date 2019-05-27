@@ -20,7 +20,7 @@ class HttpUtils {
   /// default options
   static const String API_PREFIX = SERVER_IP;
   static const int CONNECT_TIMEOUT = 10000;
-  static const int RECEIVE_TIMEOUT = 3000;
+  static const int RECEIVE_TIMEOUT = 10000;
 
   /// http request methods
   static const String GET = 'get';

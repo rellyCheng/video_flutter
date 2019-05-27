@@ -3,12 +3,11 @@ import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
 import '../utils/HttpUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_socket_io/flutter_socket_io.dart';
-import 'package:flutter_socket_io/socket_io_manager.dart';
 import './historyMatch.dart';
 import 'package:flutter/gestures.dart';
 import './login.dart';
 import '../utils/settings.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class IndexPage extends StatefulWidget {
   @override
@@ -165,15 +164,20 @@ class IndexState extends State<IndexPage> {
         method: HttpUtils.GET,
       );
 
-      SocketIO socketIO;
-      socketIO = SocketIOManager().createSocketIO(SOCKET_IP, "/",query: "userId=$_userId");
-      socketIO.init();
-      socketIO.subscribe("socket_info", _onSocketInfo);
-      socketIO.connect();
+        IO.Socket socket = IO.io(SOCKET_IP+'?userId=$_userId', <String, dynamic>{
+          'transports': ['websocket'],
+          'extraHeaders': {'userId': '123'},
+        });
+        socket.on('connect', (_) {
+          print('connect');
+        });
+        socket.on('news', (data) => _onSocketInfo(data));
+        socket.on('disconnect', (_) => print('disconnect'));
+        socket.on('fromServer', (_) => print(_));
     }
   }
   _onSocketInfo(dynamic data) async{
-    var roomId = data;
+    var roomId = data[0];
     print(roomId);
     if(_toCallPage){
       //获取相机权限和录音权限

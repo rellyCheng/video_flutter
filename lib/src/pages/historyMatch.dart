@@ -41,19 +41,22 @@ class _HistoryMatchState extends State<HistoryMatch> with SingleTickerProviderSt
        method: HttpUtils.GET,
       );
       // str = result["data"];
-      if(type==refresh){
-        _easyRefreshKey.currentState.callRefreshFinish();
-        str.clear();
-        setState(() {
-          str = result["data"];
+      if(result!=null){
+        if(type==refresh){
+          _easyRefreshKey.currentState.callRefreshFinish();
+          str.clear();
+          setState(() {
+            str = result["data"];
         });
       }
       if(type==loadMore){
-        _easyRefreshKey.currentState.callLoadMoreFinish();
-        str.addAll(result["data"]);
-        setState(() {
+          _easyRefreshKey.currentState.callLoadMoreFinish();
+          str.addAll(result["data"]);
+          setState(() {
         });
       }
+      }
+      
   }
   _loadMoreList() {
     _getHistoryList(++current,loadMore);
