@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
 import '../utils/HttpUtils.dart';
+import '../utils/MessageUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './historyMatch.dart';
 import 'package:flutter/gestures.dart';
@@ -22,12 +23,14 @@ class IndexState extends State<IndexPage> {
   bool _toCallPage;
   var _buttonText = '匹配';
   var _userId;
+  IO.Socket socket;
 
 
    @override
   void initState() {
     _toCallPage = true;
-    getUser();
+    getUserAndConnectSocket();
+   
     super.initState();
   }
 
@@ -41,7 +44,8 @@ class IndexState extends State<IndexPage> {
   @override
   void deactivate() {
     print('deactivate');
-     _toCallPage = !_toCallPage;
+    _buttonText = '匹配';
+    _toCallPage = !_toCallPage;
     super.deactivate();
   }
 
@@ -113,11 +117,13 @@ class IndexState extends State<IndexPage> {
        
   }
 
-  getUser() async{
+  getUserAndConnectSocket() async{
     // 获取实例
     var prefs = await SharedPreferences.getInstance();
     // 获取存储数据
-     _userId = prefs.getInt('userId');
+    _userId = prefs.getInt('userId');
+    //连接socket服务
+    connectSocket(_userId);
   }
   bool _checkLogin()  {
     if(_userId == null){
@@ -149,37 +155,26 @@ class IndexState extends State<IndexPage> {
   }
 
   onJoin() async {
-     // 获取实例
-    var prefs = await SharedPreferences.getInstance();
-    // 获取存储数据
-    var _userId = prefs.getInt('userId');
     //校验用户是否登录
     if(_checkLogin()){
       setState(() {
         _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
       });
-
-      var result = await HttpUtils.request(
+    
+      await HttpUtils.request(
         '/api/match/user?userId='+'$_userId', 
         method: HttpUtils.GET,
       );
-
-        IO.Socket socket = IO.io(SOCKET_IP+'?userId=$_userId', <String, dynamic>{
-          'transports': ['websocket'],
-          'extraHeaders': {'userId': '123'},
-        });
-        socket.on('connect', (_) {
-          print('connect');
-        });
-        socket.on('news', (data) => _onSocketInfo(data));
-        socket.on('disconnect', (_) => print('disconnect'));
-        socket.on('fromServer', (_) => print(_));
     }
+  }
+  connectSocket(_userId) async{
+      socket = MessageUtils().connect(_userId);
+      socket.on('news', (data) => _onSocketInfo(data));
   }
   _onSocketInfo(dynamic data) async{
     var roomId = data[0];
     print(roomId);
-    if(_toCallPage){
+    if(_toCallPage&&_buttonText == "匹配中..."){
       //获取相机权限和录音权限
       await _handleCameraAndMic();
       // 跳转到视频通话页面
