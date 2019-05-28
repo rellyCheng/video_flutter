@@ -123,7 +123,9 @@ class IndexState extends State<IndexPage> {
     // 获取存储数据
     _userId = prefs.getInt('userId');
     //连接socket服务
-    connectSocket(_userId);
+    if(_userId!=null){
+      connectSocket(_userId);
+    }
   }
   bool _checkLogin()  {
     if(_userId == null){
