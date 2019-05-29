@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import './login.dart';
 import '../utils/settings.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import './homeDrawer.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -52,7 +53,10 @@ class IndexState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
+        backgroundColor: Colors.white,
+        // drawer: new Drawer(
+        //   child: HomeBuilder.homeDrawer(),
+        // ),
         body: Center(
           child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
