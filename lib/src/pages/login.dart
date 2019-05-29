@@ -61,12 +61,14 @@ class _LoginPageState extends State<LoginPage> {
 
   _startTimer() {
     _seconds = 10;
-     print(_timer==null);
+    _verifyStr = '$_seconds(s)';
+    setState(() {});
+     print(_seconds);
     _timer = new Timer.periodic(new Duration(seconds: 1), (timer) {
       if (_seconds == 0) {
         timer?.cancel();//此处有个坑，必须释放Timer.periodic 所产生的timer对象，只释放_timer不行，不然timer一直存在
         timer = null;
-         _cancelTimer();
+        _cancelTimer();
         return;
       }
       _seconds--;
@@ -197,9 +199,7 @@ class _LoginPageState extends State<LoginPage> {
     Widget verifyCodeBtn = new InkWell(
       onTap: (_seconds == 0)
           ? () {
-              setState(() {
                 _startTimer();
-              });
             }
           : null,
       child: new Container(
