@@ -4,12 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/HttpUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:adhara_socket_io/adhara_socket_io.dart';
-
-import '../utils/MessageUtils.dart';
-
-// import 'package:flutter_socket_io/flutter_socket_io.dart';
-// import 'package:flutter_socket_io/socket_io_manager.dart';
+import './index.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -63,38 +58,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        print('AppLifecycleState.inactive');
-        break;
-      case AppLifecycleState.paused:
-        print('AppLifecycleState.paused');
-        break;
-      case AppLifecycleState.resumed:
-        print('AppLifecycleState.resumed');
-        break;
-      case AppLifecycleState.suspending:
-        print('AppLifecycleState.suspending');
-        break;
-    }
-
-  }
-
-
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  // }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   _cancelTimer();
-  // }
 
   _startTimer() {
     _seconds = 10;
@@ -155,41 +118,6 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
-
-  _onSocketInfo(dynamic data) async{
-    print("Socket info: " + data);
-  }
-
-  // SocketIO socketIO;
-  // SocketIOManager manager = SocketIOManager();
-
-   _initSocket() async{
-    // socketIO = SocketIOManager().createSocketIO("http://192.168.101.26:9091", "/");
-    // socketIO.init();
-    // socketIO.subscribe("newMatch1", _onSocketInfo);
-    // socketIO.connect();
-
-      // socketIO = await manager.createInstance(
-      //   'http://192.168.101.26:9091',
-      //   enableLogging: true
-      // );  
-      // await socketIO.onConnect((data){
-      //   // print("connected...");
-      //   // print(data);
-      // });
-      // socketIO.onConnect((data){
-      //   print("connected...");
-      //   print(data);
-      // });
-      // socketIO.onDisconnect((data){
-      //   // print("disconnect....了");
-      // });
-      // socketIO.connect();
-
-
-
-  }
-
   _login() async{
      
     var result = await HttpUtils.request(
@@ -207,7 +135,8 @@ class _LoginPageState extends State<LoginPage> {
           // 设置存储数据
         await prefs.setInt('userId', result['data']['id']);
         await prefs.setString('phoneNumber', result['data']['userName']);
-        Navigator.pushNamed(context, "indexPage");
+        // Navigator.pushNamed(context, "indexPage");//这种写法 登录成功后点击返回键还是可以回到登录界面
+        Navigator.of(context).pushAndRemoveUntil(new MaterialPageRoute(builder: (context) => new IndexPage()), (route) => route == null);
         print(result);
       //  MessageUtils.connect(result['data']['id']);
       }else{
