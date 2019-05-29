@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './historyMatch.dart';
 import 'package:flutter/gestures.dart';
 import './login.dart';
-import '../utils/settings.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import './homeDrawer.dart';
 
@@ -50,21 +49,79 @@ class IndexState extends State<IndexPage> {
     super.deactivate();
   }
 
+
+  Widget matchButton() {
+    return Padding(
+      // height: 200,
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: RaisedButton(
+        padding: EdgeInsets.symmetric(horizontal: 100),
+        shape: CircleBorder(),
+        onPressed: ()=> onJoin(),
+        child: Text(
+          _buttonText,
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+  
+  // Widget _buildBody(){
+  //   return Container(
+  //     alignment: Alignment.center,
+  //     decoration: BoxDecoration(
+  //     image: DecorationImage(
+  //       image: NetworkImage('https://img.zcool.cn/community/0372d195ac1cd55a8012062e3b16810.jpg'),
+  //         fit: BoxFit.cover,
+  //       )
+  //     ),
+  //     child: Column(
+  //        children: <Widget>[
+  //          matchButton(),
+  //        ]
+  //     )
+  //   );
+  // }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return new Material(
+  //     child: new Scaffold(
+  //       backgroundColor: Colors.white,
+
+  //       body: _buildBody(),
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        // drawer: new Drawer(
-        //   child: HomeBuilder.homeDrawer(),
-        // ),
+        drawer: new Drawer(
+          child: HomeBuilder.homeDrawer(),
+        ),
         body: Center(
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              height: 350,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                image: NetworkImage(
+                    'https://img.zcool.cn/community/0372d195ac1cd55a8012062e3b16810.jpg'),
+                fit: BoxFit.cover,
+              )),
+              padding: EdgeInsets.symmetric(horizontal: 100),
+              // height: 350,
+              alignment: Alignment.centerLeft,
+                // margin: EdgeInsets.all(50.0),//设置子控件margin
               child: Column(
                 children: <Widget>[
                   Row(children: <Widget>[
                   ]),
+                  SizedBox(
+                      height: 200,
+                  ),
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: Row(
@@ -72,7 +129,7 @@ class IndexState extends State<IndexPage> {
                           Expanded(
                               child: Container(
                               height: 200.0,
-                              width: 200.0,
+                              // width: 200.0,
                                 child: RaisedButton(
                                   onPressed: () => onJoin(),
                                   child: Text(_buttonText),
@@ -117,7 +174,7 @@ class IndexState extends State<IndexPage> {
                 ],
               )),
         ),
-        );
+      );
        
   }
 
@@ -166,11 +223,12 @@ class IndexState extends State<IndexPage> {
       setState(() {
         _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
       });
-    
-      await HttpUtils.request(
-        '/api/match/user?userId='+'$_userId', 
-        method: HttpUtils.GET,
-      );
+      if(_buttonText == "匹配中..."){
+        await HttpUtils.request(
+          '/api/match/user?userId='+'$_userId', 
+          method: HttpUtils.GET,
+        );
+      }
     }
   }
   connectSocket(_userId) async{
