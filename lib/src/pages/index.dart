@@ -103,24 +103,34 @@ class IndexState extends State<IndexPage> {
         drawer: new Drawer(
           child: HomeBuilder.homeDrawer(),
         ),
-        body: Center(
-          child: Container(
+        body: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                 image: NetworkImage(
-                    'https://img.zcool.cn/community/0372d195ac1cd55a8012062e3b16810.jpg'),
+                    'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1559122606558&di=fe5fe8946a2f9f94ee4266a215051682&imgtype=0&src=http%3A%2F%2Fmmbiz.qpic.cn%2Fmmbiz_gif%2FeFvWlXQHsfSQqKVkMkl3g20PBcgo8WdEWianj11QPlCJe2icf0x5Aw5GV3RWG8vgQqSKX1xpe5tSQVwNtyGObZVw%2F640%3Fwx_fmt%3Dgif'),
                 fit: BoxFit.cover,
               )),
-              padding: EdgeInsets.symmetric(horizontal: 100),
+              // padding: EdgeInsets.symmetric(horizontal: 100),
               // height: 350,
-              alignment: Alignment.centerLeft,
+              // alignment: Alignment.centerLeft,
                 // margin: EdgeInsets.all(50.0),//设置子控件margin
-              child: Column(
+              child: new Offstage(
+                offstage:_buttonText == "匹配中..."?false:false,
+                child: Column(
                 children: <Widget>[
-                  Row(children: <Widget>[
-                  ]),
                   SizedBox(
-                      height: 200,
+                      height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Container(
+                      // color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.cancel, size: 50.0,)
+                    )
+                  ),
+                  SizedBox(
+                      height: 130,
                   ),
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
@@ -129,7 +139,6 @@ class IndexState extends State<IndexPage> {
                           Expanded(
                               child: Container(
                               height: 200.0,
-                              // width: 200.0,
                                 child: RaisedButton(
                                   onPressed: () => onJoin(),
                                   child: Text(_buttonText),
