@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class HomeBuilder {
   static Widget homeDrawer() {
     return new ListView(padding: const EdgeInsets.only(), children: <Widget>[
@@ -23,11 +24,19 @@ class HomeBuilder {
         applicationName: "总而言之",
         applicationVersion: "v1.0",
         applicationIcon: new Image.asset(
-          "assets/images/harden.jpg",
+          "assets/images/match.gif",
           width: 64.0,
           height: 64.0,
         ),
         applicationLegalese: "app法律条文法律条文法律条文法律条文法律条文",
+      ),
+      new ListTile(
+        leading: new CircleAvatar(child: Icon(Icons.album)),
+        title: new Text('退出'),
+        onTap: () async{
+          var prefs = await SharedPreferences.getInstance();
+          prefs.remove("userId");
+        },
       ),
     ]);
   }
@@ -42,7 +51,7 @@ class HomeBuilder {
         "707471634@qq.com",
       ),
       currentAccountPicture: new CircleAvatar(
-        backgroundImage: new AssetImage("assets/images/harden.jpg",),
+        backgroundImage: new AssetImage("assets/images/match.gif",),
       ),
       onDetailsPressed: () {
       },

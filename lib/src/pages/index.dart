@@ -25,12 +25,11 @@ class IndexState extends State<IndexPage> {
   var _userId;
   IO.Socket socket;
 
-
-   @override
+  @override
   void initState() {
     _toCallPage = true;
-    getUserAndConnectSocket();
-   
+    // getUserAndConnectSocket();
+
     super.initState();
   }
 
@@ -49,7 +48,6 @@ class IndexState extends State<IndexPage> {
     super.deactivate();
   }
 
-
   Widget matchButton() {
     return Padding(
       // height: 200,
@@ -57,7 +55,7 @@ class IndexState extends State<IndexPage> {
       child: RaisedButton(
         padding: EdgeInsets.symmetric(horizontal: 100),
         shape: CircleBorder(),
-        onPressed: ()=> onJoin(),
+        onPressed: () => onJoin(),
         child: Text(
           _buttonText,
           style: TextStyle(
@@ -68,191 +66,180 @@ class IndexState extends State<IndexPage> {
       ),
     );
   }
-  
-  // Widget _buildBody(){
-  //   return Container(
-  //     alignment: Alignment.center,
-  //     decoration: BoxDecoration(
-  //     image: DecorationImage(
-  //       image: NetworkImage('https://img.zcool.cn/community/0372d195ac1cd55a8012062e3b16810.jpg'),
-  //         fit: BoxFit.cover,
-  //       )
-  //     ),
-  //     child: Column(
-  //        children: <Widget>[
-  //          matchButton(),
-  //        ]
-  //     )
-  //   );
-  // }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return new Material(
-  //     child: new Scaffold(
-  //       backgroundColor: Colors.white,
-
-  //       body: _buildBody(),
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        drawer: new Drawer(
-          child: HomeBuilder.homeDrawer(),
-        ),
-        body: Container(
-              decoration:_buttonText == "匹配中..."? BoxDecoration(
+      backgroundColor: Colors.cyan,
+      drawer: new Drawer(
+        child: HomeBuilder.homeDrawer(),
+      ),
+      body: Container(
+          decoration: _buttonText == "匹配中..."
+              ? BoxDecoration(
                   image: DecorationImage(
                   image: AssetImage('assets/images/match.gif'),
-                  // fit: BoxFit.cover,
-                )
-              ):null,
-              // padding: EdgeInsets.symmetric(horizontal: 100),
-              // height: 350,
-              // alignment: Alignment.centerLeft,
-                // margin: EdgeInsets.all(50.0),//设置子控件margin
-            
-                child: Column(
-                children: <Widget>[
-                  SizedBox(
-                      height: 20,
-                  ),
-                  // Padding(
-                  //   padding: EdgeInsets.symmetric(vertical: 20),
-                  //   child: Container(
-                  //     // color: Colors.red,
-                  //     alignment: Alignment.centerRight,
-                  //     child: Icon(Icons.cancel, size: 50.0,)
-                  //   )
-                  // ),
-                  SizedBox(
-                      height: 130,
-                  ),
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Container(
-                              height: 200.0,
-                                child: new Offstage(
-                                  offstage:_buttonText == "匹配中..."?true:false,
-                                  child: RaisedButton(
-                                    onPressed: () => onJoin(),
-                                    child: Text(_buttonText),
-                                    color: Colors.blueAccent,
-                                    textColor: Colors.white,
-                                    shape: CircleBorder(),
-                                  ),
-                                ),
-                              ),
-                          )
-                        ],
-                      )),
-                      Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Container(
-                              width: 200.0,
-                                child:  Align(
-                                alignment: Alignment.center,
-                                child: new Offstage(
-                                offstage:_buttonText == "匹配中..."?true:false,
-                                child: RichText(
-                                    text: TextSpan(
-                                      text: '历史匹配记录',
-                                     style: TextStyle(fontSize: 17.0, color: Colors.blue),
-                                     recognizer: TapGestureRecognizer()
+                  fit: BoxFit.cover,
+                  
+                ))
+              : BoxDecoration(
+                  gradient: const LinearGradient(
+                      colors: [Colors.lime, Colors.cyan, Colors.grey]),
+                // border: Border.all(width: 5.0,color: Colors.green)
+
+              ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 200,
+              ),
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          height: 200.0,
+                          child: new Offstage(
+                            offstage: _buttonText == "匹配中..." ? true : false,
+                            child: RaisedButton(
+                              onPressed: () => onJoin(),
+                              child: Text(_buttonText,style: TextStyle(fontSize:20),),
+                              color: Colors.teal,
+                              textColor: Colors.white,
+                              shape: CircleBorder(),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          width: 200.0,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: new Offstage(
+                              offstage: _buttonText == "匹配中..." ? true : false,
+                              child: RichText(
+                                text: TextSpan(
+                                    text: '历史匹配记录',
+                                    style: TextStyle(
+                                        fontSize: 17.0, color: Colors.tealAccent),
+                                    recognizer: TapGestureRecognizer()
                                       ..onTap = () async {
-                                          //导航到历史匹配记录页面 
-                                          if(_checkLogin()){
-                                            await Navigator.push( context,
-                                            MaterialPageRoute(builder: (context) {
-                                                return HistoryMatch();
-                                            }));
-                                          }
-                                         
+                                        //导航到历史匹配记录页面
+                                        if (_checkLogin()) {
+                                          await Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return HistoryMatch();
+                                          }));
+                                        }
                                       }),
-                                    ),
-                                  ),
-                                ),
                               ),
-                          )
-                        ],
-                      )),
-                ],
-              )),
-        
-      );
-       
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+                  Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          child: new Offstage(
+                            offstage: _buttonText == "匹配中..." ? false : true,
+                            child: RaisedButton(
+                              onPressed: () => this.setState((){
+                                _buttonText = "匹配";
+                              }),
+                              child: Icon(Icons.clear,color: Colors.white,),
+                              color: Colors.cyan,
+                              // textColor: Colors.tealAccent,
+                              shape: CircleBorder(),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
+            ],
+          )),
+    );
   }
 
-  getUserAndConnectSocket() async{
+  getUserAndConnectSocket() async {
     // 获取实例
     var prefs = await SharedPreferences.getInstance();
     // 获取存储数据
     _userId = prefs.getInt('userId');
     //连接socket服务
-    if(_userId!=null){
+    if (_userId != null) {
       connectSocket(_userId);
     }
   }
-  bool _checkLogin()  {
-    if(_userId == null){
-      // Navigator.push(context,MaterialPageRoute(builder: (context) => LoginPage()));
+
+  bool _checkLogin() {
+    getUserAndConnectSocket();
+    if (_userId == null) {
       showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            title: Text('温馨提示'),
-            content: Text(('您当前还未登录，请先登录！')),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("取消"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child: Text("确定"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => LoginPage()));
-                },
-              ),
-            ],
-      ));
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text('温馨提示'),
+                content: Text(('您当前还未登录，请先登录！')),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("取消"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("确定"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                  ),
+                ],
+              ));
       return false;
     }
-     return true;
+    return true;
   }
 
   onJoin() async {
     //校验用户是否登录
-    if(_checkLogin()){
+    if (_checkLogin()) {
       setState(() {
-        _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";    
+        _buttonText == "匹配" ? _buttonText = "匹配中..." : _buttonText = "匹配";
       });
-      if(_buttonText == "匹配中..."){
+      if (_buttonText == "匹配中...") {
         await HttpUtils.request(
-          '/api/match/user?userId='+'$_userId', 
+          '/api/match/user?userId=' + '$_userId',
           method: HttpUtils.GET,
         );
       }
     }
   }
-  connectSocket(_userId) async{
-      socket = MessageUtils().connect(_userId);
-      socket.on('news', (data) => _onSocketInfo(data));
+
+  connectSocket(_userId) async {
+    socket = MessageUtils().connect(_userId);
+    socket.on('news', (data) => _onSocketInfo(data));
   }
-  _onSocketInfo(dynamic data) async{
+
+  _onSocketInfo(dynamic data) async {
     var roomId = data[0];
     print(roomId);
-    if(_toCallPage&&_buttonText == "匹配中..."){
+    if (_toCallPage && _buttonText == "匹配中...") {
       //获取相机权限和录音权限
       await _handleCameraAndMic();
       // 跳转到视频通话页面
@@ -261,7 +248,7 @@ class IndexState extends State<IndexPage> {
           MaterialPageRoute(
               builder: (context) => CallPage(
                     channelName: roomId,
-      )));
+                  )));
       _toCallPage = true;
     }
   }
@@ -270,7 +257,4 @@ class IndexState extends State<IndexPage> {
     await PermissionHandler().requestPermissions(
         [PermissionGroup.camera, PermissionGroup.microphone]);
   }
-
 }
-
-
