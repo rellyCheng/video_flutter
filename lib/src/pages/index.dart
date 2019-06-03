@@ -24,6 +24,7 @@ class IndexState extends State<IndexPage> {
   var _buttonText = '匹配';
   var _userId;
   IO.Socket socket;
+  SharedPreferences prefs;
 
   @override
   void initState() {
@@ -177,7 +178,7 @@ class IndexState extends State<IndexPage> {
 
   getUserAndConnectSocket() async {
     // 获取实例
-    var prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     // 获取存储数据
     _userId = prefs.getInt('userId');
     //连接socket服务
@@ -186,8 +187,9 @@ class IndexState extends State<IndexPage> {
     }
   }
 
-  bool _checkLogin() {
-    getUserAndConnectSocket();
+   _checkLogin() async{
+    prefs = await SharedPreferences.getInstance();
+    _userId = prefs.getInt('userId');
     if (_userId == null) {
       showDialog(
           context: context,
@@ -211,9 +213,8 @@ class IndexState extends State<IndexPage> {
                   ),
                 ],
               ));
-      return false;
+      return ;
     }
-    return true;
   }
 
   onJoin() async {
