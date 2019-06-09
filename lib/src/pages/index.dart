@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import './login.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import './homeDrawer.dart';
+import '../utils/settings.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -22,14 +23,12 @@ class IndexState extends State<IndexPage> {
   final _channelController = TextEditingController();
   bool _toCallPage;
   var _buttonText = '匹配';
-  var _userId;
   IO.Socket socket;
-  SharedPreferences prefs;
 
   @override
   void initState() {
     _toCallPage = true;
-    // getUserAndConnectSocket();
+    getUserAndConnectSocket();
 
     super.initState();
   }
@@ -178,19 +177,18 @@ class IndexState extends State<IndexPage> {
 
   getUserAndConnectSocket() async {
     // 获取实例
-    prefs = await SharedPreferences.getInstance();
+    var prefs = await SharedPreferences.getInstance();
     // 获取存储数据
-    _userId = prefs.getInt('userId');
+    USER_ID = prefs.getInt('userId');
     //连接socket服务
-    if (_userId != null) {
-      connectSocket(_userId);
+    if (USER_ID != null) {
+      connectSocket();
     }
   }
 
-   _checkLogin() async{
-    prefs = await SharedPreferences.getInstance();
-    _userId = prefs.getInt('userId');
-    if (_userId == null) {
+
+   bool _checkLogin() {
+    if (USER_ID == null) {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -213,8 +211,9 @@ class IndexState extends State<IndexPage> {
                   ),
                 ],
               ));
-      return ;
+      return false;
     }
+    return true;
   }
 
   onJoin() async {
@@ -225,15 +224,15 @@ class IndexState extends State<IndexPage> {
       });
       if (_buttonText == "匹配中...") {
         await HttpUtils.request(
-          '/api/match/user?userId=' + '$_userId',
+          '/api/match/user?userId=' + USER_ID,
           method: HttpUtils.GET,
         );
       }
     }
   }
 
-  connectSocket(_userId) async {
-    socket = MessageUtils().connect(_userId);
+  connectSocket() async {
+    socket = MessageUtils().connect(USER_ID);
     socket.on('news', (data) => _onSocketInfo(data));
   }
 

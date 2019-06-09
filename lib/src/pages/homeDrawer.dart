@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recall/src/utils/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class HomeBuilder {
   static Widget homeDrawer() {
@@ -36,6 +37,7 @@ class HomeBuilder {
         onTap: () async{
           var prefs = await SharedPreferences.getInstance();
           prefs.remove("userId");
+          USER_ID = null;
         },
       ),
     ]);

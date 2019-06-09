@@ -5,8 +5,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/taurus_header.dart';
 import 'package:flutter_easyrefresh/bezier_bounce_footer.dart';
 import '../utils/HttpUtils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import '../utils/settings.dart';
 class HistoryMatch extends StatefulWidget {
   @override
   _HistoryMatchState createState() => _HistoryMatchState();
@@ -32,12 +31,11 @@ class _HistoryMatchState extends State<HistoryMatch> with SingleTickerProviderSt
   }
 
   _getHistoryList(current,type) async{
+    if(USER_ID!=null){
       //获取数据持久化实例
-      var prefs = await SharedPreferences.getInstance();
       int _size = 1;
-      int _userId = prefs.getInt('userId');
       var result = await HttpUtils.request(
-      '/api/match/getHistoryList?size=$_size&current=$current&userId=$_userId', 
+      '/api/match/getHistoryList?size=$_size&current=$current&userId=$USER_ID', 
        method: HttpUtils.GET,
       );
       // str = result["data"];
@@ -56,7 +54,7 @@ class _HistoryMatchState extends State<HistoryMatch> with SingleTickerProviderSt
         });
       }
       }
-      
+   }
   }
   _loadMoreList() {
     _getHistoryList(++current,loadMore);
