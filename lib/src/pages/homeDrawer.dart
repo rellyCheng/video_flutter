@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recall/src/utils/settings.dart';
+import '../utils/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class HomeBuilder {
   static Widget homeDrawer() {

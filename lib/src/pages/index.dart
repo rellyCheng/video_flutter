@@ -224,7 +224,7 @@ class IndexState extends State<IndexPage> {
       });
       if (_buttonText == "匹配中...") {
         await HttpUtils.request(
-          '/api/match/user?userId=' + USER_ID,
+          '/api/match/user?userId=$USER_ID',
           method: HttpUtils.GET,
         );
       }

@@ -97,13 +97,16 @@ class _LoginPageState extends State<LoginPage> {
         'phoneNumber': _phoneNum,
       }
     );
-    if(result["state"]==0){
-        _timer = new Timer(new Duration(seconds: 3), () {
-          _showDialog("验证码为："+result["message"]+",有效时间为5分钟。");
-        });
-    }else{
-       _showDialog(result["message"]);
+    if(result!=null){
+      if(result["state"]==0){
+            _timer = new Timer(new Duration(seconds: 3), () {
+              _showDialog("验证码为："+result["message"]+",有效时间为5分钟。");
+            });
+        }else{
+          _showDialog(result["message"]);
+        }
     }
+ 
   }
 
   _showDialog(text){
