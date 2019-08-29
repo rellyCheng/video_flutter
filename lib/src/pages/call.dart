@@ -72,7 +72,7 @@ class _CallPageState extends State<CallPage> {
     AgoraRtcEngine.onError = (int code) {
       setState(() {
         String info = 'onError: ' + code.toString();
-        _infoStrings.add(info);
+        // _infoStrings.add(info);
       });
     };
 
